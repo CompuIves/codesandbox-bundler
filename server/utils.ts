@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as hash from 'string-hash';
+import * as rmdir from 'rimraf';
 
 export function createDirectoryRecursively(directory: string) {
   const directories = directory.split('/').filter(x => x);
@@ -13,6 +14,17 @@ export function createDirectoryRecursively(directory: string) {
 
     return `${prev}${next}/`;
   }, '');
+}
+
+export function deleteDirectory(directory: string) {
+  console.log(`Deleting ${directory}`);
+  return new Promise((resolve, reject) => {
+    rmdir(directory, (err) => {
+      if (err) return reject(err);
+
+      resolve();
+    });
+  });
 }
 
 export function createHash(packages: { [key: string]: string }): string {

@@ -20,6 +20,7 @@
     "mongoose": "^4.7.4",
     "mz": "^2.6.0",
     "redis": "^2.6.3",
+    "rimraf": "^2.5.4",
     "string-hash": "^1.1.1",
     "typescript-babel-jest": "^0.1.8",
     "webpack": "2.2.0-rc.2",

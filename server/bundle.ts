@@ -4,7 +4,7 @@ import * as path from 'path';
 import { exec } from 'mz/child_process';
 
 import { default as bundle } from './webpack';
-import { createHash, createDirectoryRecursively } from './utils';
+import { createHash, deleteDirectory, createDirectoryRecursively } from './utils';
 // import { upload } from './s3';
 import { upload } from './gcloud';
 import { isInQueue, addToQueue, removeFromQueue, saveBundleInfo, getBundleInfo } from './redis';
@@ -19,33 +19,38 @@ const generatePackageJSON = (name, packages): string => (
 );
 
 async function bundleDependencies(name: string, hash: string, packages) {
-  await addToQueue(hash);
-  const startTime = +new Date();
+  try {
+    await addToQueue(hash);
+    const startTime = +new Date();
 
-  const directory = `${TEMP_ROOT}/${hash}`;
-  const packageJSON = generatePackageJSON(name, packages);
+    const directory = `${TEMP_ROOT}/${hash}`;
+    const packageJSON = generatePackageJSON(name, packages);
 
-  await installDependencies(directory, packageJSON);
+    await installDependencies(directory, packageJSON);
 
-  const dependencies = Object.keys(packages);
-  await bundle(hash, dependencies, directory);
+    const dependencies = Object.keys(packages);
+    await bundle(hash, dependencies, directory);
 
-  const endTime = +new Date();
+    const endTime = +new Date();
 
-  console.log(`Bundled ${hash} in ${endTime - startTime}ms`);
+    console.log(`Bundled ${hash} in ${endTime - startTime}ms`);
 
+    // --- AWS ---
+    // const fileContents = await fs.readFile(path.join(directory, `${hash}.js`));
+    // await upload(`${hash}.js`, fileContents);
+    // --- AWS ---
 
-  // const fileContents = await fs.readFile(path.join(directory, `${hash}.js`));
+    await upload(path.join(directory, `${hash}.js`));
 
-  // await upload(`${hash}.js`, fileContents);
-  await upload(path.join(directory, `${hash}.js`));
+    const manifest = await fs.readFile(path.join(directory, 'manifest.json'));
 
-  const manifest = await fs.readFile(path.join(directory, 'manifest.json'));
+    await saveBundleInfo(hash, manifest);
+    await removeFromQueue(hash);
 
-  await saveBundleInfo(hash, manifest);
-  await removeFromQueue(hash);
-
-  await fs.rmdir(directory);
+    await deleteDirectory(directory);
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 async function installDependencies(directory: string, packageJSON: string) {
