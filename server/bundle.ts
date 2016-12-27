@@ -5,7 +5,8 @@ import { exec } from 'mz/child_process';
 
 import { default as bundle } from './webpack';
 import { createHash, createDirectoryRecursively } from './utils';
-import { upload } from './s3';
+// import { upload } from './s3';
+import { upload } from './gcloud';
 
 const TEMP_ROOT = 'temp';
 
@@ -32,9 +33,10 @@ async function bundleDependencies(name: string, hash: string, packages) {
   console.log(`Bundled ${hash} in ${endTime - startTime}ms`);
 
 
-  const fileContents = await fs.readFile(path.join(directory, `${hash}.js`));
+  // const fileContents = await fs.readFile(path.join(directory, `${hash}.js`));
 
-  await upload(`${hash}.js`, fileContents);
+  // await upload(`${hash}.js`, fileContents);
+  await upload(path.join(directory, `${hash}.js`));
 }
 
 async function installDependencies(directory: string, packageJSON: string) {

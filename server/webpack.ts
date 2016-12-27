@@ -16,7 +16,8 @@ function getEntries(directory) {
       const contents = fs.readFileSync(filePath).toString();
       return { package: packageName, main: contents.match(/"main": "(.*)"/) };
     }
-  }).filter(x => x.main)
+  }).filter(x => x)
+    .filter(x => x.main)
     .map(x => ({ package: x.package, main: x.main[1] }))
     .filter(x => x.main)
     .map(x => ({ package: x.package, main: `${x.package}/${x.main.replace('./', '')}` }))
