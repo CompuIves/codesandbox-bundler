@@ -1,0 +1,49 @@
+{
+  "name": "codesandbox-bundler",
+  "version": "1.0.0",
+  "private": true,
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsc && NODE_ENV=production node build",
+    "test": "jest --no-cache",
+    "test:watch": "jest --no-cache --watch"
+  },
+  "author": "Ives van Hoorne",
+  "dependencies": {
+    "aws-sdk": "^2.7.19",
+    "jest": "^18.0.0",
+    "koa": "next",
+    "koa-bodyparser": "next",
+    "koa-route": "next",
+    "mongoose": "^4.7.4",
+    "mz": "^2.6.0",
+    "redis": "^2.6.3",
+    "string-hash": "^1.1.1",
+    "typescript-babel-jest": "^0.1.8",
+    "webpack": "2.2.0-rc.2",
+    "yarn": "^0.18.1"
+  },
+  "devDependencies": {
+    "@types/koa": "^2.0.37",
+    "@types/mongoose": "^4.7.2",
+    "@types/node": "^6.0.53",
+    "eslint": "^3.12.2",
+    "eslint-config-airbnb": "^13.0.0",
+    "eslint-plugin-import": "2.1.0",
+    "eslint-plugin-jsx-a11y": "2.2.3",
+    "eslint-plugin-react": "^6.8.0",
+    "typescript-eslint-parser": "^1.0.0"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.(ts|tsx)$": "./node_modules/typescript-babel-jest"
+    },
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "testRegex": "__test__/.*\\.test\\.(ts|tsx)$"
+  }
+}
