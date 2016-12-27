@@ -5,7 +5,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "tsc && NODE_ENV=production node build",
+    "start": "tsc && node build",
     "test": "jest --no-cache",
     "test:watch": "jest --no-cache --watch"
   },
@@ -29,11 +29,13 @@
     "@types/koa": "^2.0.37",
     "@types/mongoose": "^4.7.2",
     "@types/node": "^6.0.53",
+    "@types/redis": "^0.12.34",
     "eslint": "^3.12.2",
     "eslint-config-airbnb": "^13.0.0",
     "eslint-plugin-import": "2.1.0",
     "eslint-plugin-jsx-a11y": "2.2.3",
     "eslint-plugin-react": "^6.8.0",
+    "typescript": "^2.1.4",
     "typescript-eslint-parser": "^1.0.0"
   },
   "jest": {

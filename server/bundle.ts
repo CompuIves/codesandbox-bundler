@@ -7,6 +7,7 @@ import { default as bundle } from './webpack';
 import { createHash, createDirectoryRecursively } from './utils';
 // import { upload } from './s3';
 import { upload } from './gcloud';
+import { isInQueue, addToQueue, removeFromQueue, saveBundleInfo, getBundleInfo } from './redis';
 
 const TEMP_ROOT = 'temp';
 
@@ -18,6 +19,7 @@ const generatePackageJSON = (name, packages): string => (
 );
 
 async function bundleDependencies(name: string, hash: string, packages) {
+  await addToQueue(hash);
   const startTime = +new Date();
 
   const directory = `${TEMP_ROOT}/${hash}`;
@@ -37,6 +39,13 @@ async function bundleDependencies(name: string, hash: string, packages) {
 
   // await upload(`${hash}.js`, fileContents);
   await upload(path.join(directory, `${hash}.js`));
+
+  const manifest = await fs.readFile(path.join(directory, 'manifest.json'));
+
+  await saveBundleInfo(hash, manifest);
+  await removeFromQueue(hash);
+
+  await fs.rmdir(directory);
 }
 
 async function installDependencies(directory: string, packageJSON: string) {
@@ -54,11 +63,18 @@ export default async (ctx) => {
 
   const hash: string = createHash(packages);
 
+  const cachedBundle = JSON.parse(await getBundleInfo(hash));
+  if (cachedBundle) {
+    ctx.body = JSON.stringify({ hash, manifest: cachedBundle });
+    return;
+  }
+
   // Caching stuff
-
-
-  // This will be done in the background
-  bundleDependencies(name, hash, packages);
+  if (!(await isInQueue(hash))) {
+    console.log(`${hash} not in queue, starting to bundle.`);
+    // This will be done in the background
+    bundleDependencies(name, hash, packages);
+  }
 
   ctx.body = JSON.stringify({ hash, processing: true });
 }
