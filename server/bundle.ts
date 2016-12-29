@@ -2,33 +2,55 @@ import { Context } from 'koa';
 import * as fs from 'mz/fs';
 import * as path from 'path';
 import { exec } from 'mz/child_process';
+import axios from 'axios';
 
-import { default as bundle } from './webpack';
+import env from './env';
+import bundle from './webpack';
 import { createHash, deleteDirectory, createDirectoryRecursively } from './utils';
 // import { upload } from './s3';
-import { upload } from './gcloud';
-import { isInQueue, addToQueue, removeFromQueue, saveBundleInfo, getBundleInfo } from './redis';
+import cloud from './cloud';
+import { isInQueue, addToQueue, removeFromQueue, saveBundleInfo, getBundleInfo, saveBundleError } from './redis';
 
 const TEMP_ROOT = 'temp';
 
-const generatePackageJSON = (name, packages): string => (
+const generatePackageJSON = (packages): string => (
   JSON.stringify({
-    name,
+    name: 'dependencies',
     dependencies: packages,
   })
 );
 
-async function bundleDependencies(name: string, hash: string, packages) {
+const sandboxUrl = (id: string) => (
+  env === 'development' ?
+    `http://nginx/api/v1/sources/${id}/dependencies`
+  : `https://codesandbox.io/api/v1/sources/${id}/dependencies`
+);
+
+const generateURL = (hash: string) => (
+  env === 'development' ?
+    `http://bundles.codesandbox.dev/${hash}.js`
+  : `https://bundles.codesandbox.io/${hash}.js`
+);
+
+const createBundleResponse = (cachedBundle, url, hash, ctx) => {
+  if (cachedBundle.error) {
+    ctx.status = 500;
+    ctx.body = JSON.stringify(cachedBundle);
+  } else {
+    ctx.body = JSON.stringify({ url, hash, manifest: cachedBundle });
+  }
+}
+
+async function bundleDependencies(hash: string, packages) {
   try {
     await addToQueue(hash);
     const startTime = +new Date();
 
     const directory = `${TEMP_ROOT}/${hash}`;
-    const packageJSON = generatePackageJSON(name, packages);
+    const packageJSON = generatePackageJSON(packages);
+    const dependencies = Object.keys(packages);
 
     await installDependencies(directory, packageJSON);
-
-    const dependencies = Object.keys(packages);
     await bundle(hash, dependencies, directory);
 
     const endTime = +new Date();
@@ -40,7 +62,7 @@ async function bundleDependencies(name: string, hash: string, packages) {
     // await upload(`${hash}.js`, fileContents);
     // --- AWS ---
 
-    await upload(path.join(directory, `${hash}.js`));
+    await cloud.upload(path.join(directory, `${hash}.js`));
 
     const manifest = await fs.readFile(path.join(directory, 'manifest.json'));
 
@@ -49,6 +71,8 @@ async function bundleDependencies(name: string, hash: string, packages) {
 
     await deleteDirectory(directory);
   } catch (e) {
+    await saveBundleError(hash, e);
+    await removeFromQueue(hash);
     console.error(e);
   }
 }
@@ -61,16 +85,24 @@ async function installDependencies(directory: string, packageJSON: string) {
   await exec(`cd ${directory} && yarn --no-lockfile`);
 }
 
-export default async (ctx) => {
-  const { name, packages } = ctx.request.body;
+export async function post(ctx) {
+  const { id } = ctx.request.body;
 
-  if (name == null || packages == null) throw new Error('Invalid argument body');
+  if (id == null) throw new Error('Invalid Sandbox id');
+
+  const response = await axios({
+    url: sandboxUrl(id),
+    method: 'GET'
+  });
+
+  const packages = response.data.npm_dependencies;
 
   const hash: string = createHash(packages);
+  const url: string = generateURL(hash);
 
   const cachedBundle = JSON.parse(await getBundleInfo(hash));
   if (cachedBundle) {
-    ctx.body = JSON.stringify({ hash, manifest: cachedBundle });
+    createBundleResponse(cachedBundle, url, hash, ctx);
     return;
   }
 
@@ -78,8 +110,23 @@ export default async (ctx) => {
   if (!(await isInQueue(hash))) {
     console.log(`${hash} not in queue, starting to bundle.`);
     // This will be done in the background
-    bundleDependencies(name, hash, packages);
+    bundleDependencies(hash, packages);
   }
 
-  ctx.body = JSON.stringify({ hash, processing: true });
+  ctx.body = JSON.stringify({ url, hash, processing: true });
+}
+
+export async function get(ctx: Context, hash) {
+  if (hash == null) throw new Error('No hash provided');
+
+  const url = generateURL(hash);
+
+  const cachedBundle = JSON.parse(await getBundleInfo(hash));
+  if (cachedBundle) {
+    createBundleResponse(cachedBundle, url, hash, ctx);
+    return;
+  }
+
+  const inQueue = await isInQueue(hash);
+  ctx.body = JSON.stringify({ url, hash, processing: !!inQueue });
 }

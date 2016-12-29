@@ -14,7 +14,10 @@ function getEntries(directory) {
     const filePath = path.join(directory, 'node_modules', packageName, 'package.json');
     if (fs.existsSync(filePath)) {
       const contents = fs.readFileSync(filePath).toString();
-      return { package: packageName, main: contents.match(/"main": "(.*)"/) };
+      return {
+        package: packageName,
+        main: contents.match(/"jsnext:main": "(.*)"/) || contents.match(/"main": "(.*)"/)
+      };
     }
   }).filter(x => x)
     .filter(x => x.main)
@@ -46,6 +49,13 @@ function rewriteManifest(hash, directory) {
   Object.keys(entries).forEach(packageName => {
     newContent[packageName] = newContent[entries[packageName]];
   });
+
+  // Also transform /index.js in manifest as well
+  Object.keys(newContent).forEach(packageRoute => {
+    if (packageRoute.endsWith('/index.js')) {
+      newContent[packageRoute.replace('/index.js', '')] = newContent[packageRoute];
+    }
+  })
 
   fs.writeFileSync(manifestPath, JSON.stringify({
     ...manifestJSON,

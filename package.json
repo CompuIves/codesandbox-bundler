@@ -12,6 +12,7 @@
   "author": "Ives van Hoorne",
   "dependencies": {
     "aws-sdk": "^2.7.19",
+    "axios": "^0.15.3",
     "google-cloud": "^0.45.1",
     "jest": "^18.0.0",
     "koa": "next",
