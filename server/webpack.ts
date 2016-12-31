@@ -57,10 +57,7 @@ function rewriteManifest(hash, directory) {
     }
   })
 
-  fs.writeFileSync(manifestPath, JSON.stringify({
-    ...manifestJSON,
-    content: newContent,
-  }));
+  fs.writeFileSync(manifestPath, JSON.stringify(newContent));
 }
 
 export default function bundle(hash: string, dependencies: Array<string>, directory: string) {
