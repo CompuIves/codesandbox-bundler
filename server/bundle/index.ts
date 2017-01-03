@@ -4,12 +4,12 @@ import * as path from 'path';
 import { exec } from 'mz/child_process';
 import axios from 'axios';
 
-import env from './env';
+import env from '../env';
 import bundle from './webpack';
-import { createHash, deleteDirectory, createDirectoryRecursively } from './utils';
+import { createHash, deleteDirectory, createDirectoryRecursively } from '../utils';
 // import { upload } from './s3';
-import cloud from './cloud';
-import { isInQueue, addToQueue, removeFromQueue, saveBundleInfo, getBundleInfo, saveBundleError } from './redis';
+import cloud from '../cloud';
+import { isInQueue, addToQueue, removeFromQueue, saveBundleInfo, getBundleInfo, saveBundleError } from '../redis';
 
 const TEMP_ROOT = 'temp';
 
