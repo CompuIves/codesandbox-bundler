@@ -88,7 +88,7 @@ async function installDependencies(directory: string, packageJSON: string) {
 export async function post(ctx) {
   const { id } = ctx.request.body;
 
-  if (id == null) throw new Error('Invalid Sandbox id');
+  if (id == null) throw new Error('Invalid Sandbox ID');
 
   const response = await axios({
     url: sandboxUrl(id),

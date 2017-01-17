@@ -32,7 +32,7 @@ app.use(async (ctx, next) => {
 app.use(router.get('/', (ctx: Koa.Context) => ctx.body = 'Hello!'));
 app.use(router.post('/bundle', bundle.post));
 app.use(router.get('/bundle/:hash', bundle.get));
-app.use(router.get('/npm/version/:packageName/:version', version.getAbsoluteVersion));
+app.use(router.get('/npm/version/:packageName/:version+', version.getAbsoluteVersion));
 
 app.listen(2000, () => {
   console.log('Server started on port 2000!');

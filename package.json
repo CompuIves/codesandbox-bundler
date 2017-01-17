@@ -5,7 +5,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "tsc && node build",
+    "start": "rimraf build && tsc && node build",
     "test": "jest --no-cache",
     "test:watch": "jest --no-cache --watch"
   },
