@@ -2,6 +2,7 @@ import { storage } from 'google-cloud';
 
 import { default as env } from './env';
 import { CloudInterface } from './cloud';
+import { log } from './utils/log';
 
 const gcs = storage({
   projectId: 'codesandbox-153802',
@@ -12,11 +13,11 @@ const bucket = gcs.bucket('bundles.codesandbox.io');
 
 export function upload(filePath) {
   return new Promise((resolve, reject) => {
-    console.log('Uploading to gcloud');
+    log('Uploading to gcloud');
     bucket.upload(filePath, { gzip: true, public: true }, (err, file) => {
       if (err) return reject(err);
 
-      console.log('Uploaded!');
+      log('Uploaded!');
       resolve(file);
     });
   });

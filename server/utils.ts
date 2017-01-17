@@ -2,13 +2,15 @@ import * as fs from 'fs';
 import * as hash from 'string-hash';
 import * as rmdir from 'rimraf';
 
+import { log } from './utils/log';
+
 export function createDirectoryRecursively(directory: string) {
   const directories = directory.split('/').filter(x => x);
 
   directories.reduce((prev, next) => {
     const exists = fs.existsSync(prev + next);
     if (!exists) {
-      console.log('creating ' + prev + next);
+      log('creating ' + prev + next);
       fs.mkdirSync(prev + next);
     }
 
@@ -17,7 +19,7 @@ export function createDirectoryRecursively(directory: string) {
 }
 
 export function deleteDirectory(directory: string) {
-  console.log(`Deleting ${directory}`);
+  log(`Deleting ${directory}`);
   return new Promise((resolve, reject) => {
     rmdir(directory, (err) => {
       if (err) return reject(err);

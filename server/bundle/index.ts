@@ -6,6 +6,7 @@ import axios from 'axios';
 
 import env from '../env';
 import bundle from './webpack';
+import { log } from '../utils/log';
 import { createHash, deleteDirectory, createDirectoryRecursively } from '../utils';
 // import { upload } from './s3';
 import cloud from '../cloud';
@@ -55,7 +56,7 @@ async function bundleDependencies(hash: string, packages) {
 
     const endTime = +new Date();
 
-    console.log(`Bundled ${hash} in ${endTime - startTime}ms`);
+    log(`Bundled ${hash} in ${endTime - startTime}ms`);
 
     // --- AWS ---
     // const fileContents = await fs.readFile(path.join(directory, `${hash}.js`));
@@ -108,7 +109,7 @@ export async function post(ctx) {
 
   // Caching stuff
   if (!(await isInQueue(hash))) {
-    console.log(`${hash} not in queue, starting to bundle.`);
+    log(`${hash} not in queue, starting to bundle.`);
     // This will be done in the background
     bundleDependencies(hash, packages);
   }
