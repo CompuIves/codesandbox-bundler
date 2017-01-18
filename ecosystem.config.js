@@ -25,10 +25,10 @@ module.exports = {
   deploy: {
     production: {
       user: 'bundler',
-      host: 'ssh@codesandbox.io',
+      host: 'ssh.codesandbox.io',
       ref: 'origin/master',
       repo: 'git@github.com:CompuIves/codesandbox-bundler.git',
-      path: '/home/bundler/',
+      path: '/home/bundler',
       'post-deploy': 'npm install && npm run build && pm2 startOrRestart ecosystem.json --env production',
     },
   },
