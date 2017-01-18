@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { log } from './utils/log';
-import { createDirectoryRecursively } from './utils';
+import { createDirectoryRecursively } from './utils/directories';
 import { CloudInterface } from './cloud';
 
 export function upload(filePath: string) {

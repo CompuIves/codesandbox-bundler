@@ -1,4 +1,4 @@
-import { createHash } from '../server/utils';
+import { createHash } from '../../server/utils/hashing';
 
 it('creates a hash', () => {
   const hash = createHash({ test: 'b' });
