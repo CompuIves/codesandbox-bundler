@@ -9,7 +9,7 @@
     "start": "npm run build && node build",
     "test": "jest --no-cache",
     "test:watch": "jest --no-cache --watch",
-    "deploy": "pm2 deploy ecosystem.json production setup"
+    "deploy": "pm2 deploy ecosystem.json production"
   },
   "author": "Ives van Hoorne",
   "dependencies": {
