@@ -14,6 +14,7 @@ module.exports = {
       },
       env_production: {
         NODE_ENV: 'production',
+        REDIS_HOST: 'localhost',
       },
     },
   ],

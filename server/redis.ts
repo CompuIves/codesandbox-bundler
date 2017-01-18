@@ -1,10 +1,7 @@
 import * as redis from 'redis';
-import { default as env } from './env';
-
-const config = require(`../config/${env}.json`);
 
 const client = redis.createClient({
-  host: config.host
+  host: process.env.REDIS_HOST || 'localhost'
 });
 
 const promiseResolver = (resolve, reject) => (err, reply) => {
