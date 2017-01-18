@@ -84,7 +84,8 @@ async function installDependencies(directory: string, packageJSON: string) {
 
   await fs.writeFile(`${directory}/package.json`, packageJSON);
 
-  await exec(`cd ${directory} && yarn --no-lockfile`);
+  // Ignore scripts is MUCH safer, will keep this on until we dockerize this application
+  await exec(`cd ${directory} && yarn --no-lockfile --ignore-scripts`);
 }
 
 export async function post(ctx) {
