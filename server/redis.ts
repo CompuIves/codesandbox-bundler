@@ -1,7 +1,8 @@
 import * as redis from 'redis';
+import env from './env';
 
 const client = redis.createClient({
-  host: process.env.REDIS_HOST || 'localhost'
+  host: env === 'development' ? 'redis' : 'localhost',
 });
 
 const promiseResolver = (resolve, reject) => (err, reply) => {
