@@ -10,7 +10,7 @@ import { log } from '../utils/log';
 import { deleteDirectory, createDirectoryRecursively } from '../utils/directories';
 import { createHash } from '../utils/hashing';
 // import { upload } from './s3';
-import cloud from '../cloud';
+import cloud from './cloud';
 import { isInQueue, addToQueue, removeFromQueue, saveBundleInfo, getBundleInfo, saveBundleError } from '../redis';
 
 export const TEMP_ROOT = 'temp/bundles';

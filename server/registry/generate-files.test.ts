@@ -29,6 +29,31 @@ it('creates the right structure', async () => {
   expect(fs.readFileSync(`${TEMP_ROOT}/anonymous/test/1.0.0/directory/firstmodule.js`).toString()).toEqual('hello world');
 });
 
+it('creates the right root directory', async () => {
+  const version = {
+    version: '1.0.0',
+    sandbox: {
+      slug: 'test'
+    },
+    source: {
+      directories: [{
+        id: 1,
+        directory_id: null,
+        title: 'directory'
+      }],
+      modules: [{
+        directory_id: 1,
+        title: 'firstmodule.js',
+        code: 'hello world',
+      }]
+    }
+  };
+
+  const directory = await generateFiles(version);
+
+  expect(directory).toEqual(`${TEMP_ROOT}/anonymous/test/1.0.0`);
+});
+
 it('handles multiple files', async () => {
   const version = {
     version: '2.0.0',
@@ -178,4 +203,4 @@ it('handles multiple child directories', async () => {
   expect(fs.readFileSync(`${TEMP_ROOT}/anonymous/test/4.0.0/directory/hello/aaaaaa.js`).toString()).toEqual('hello world3');
 });
 
-afterAll(() => deleteDirectory(TEMP_ROOT))
+// afterAll(() => deleteDirectory(TEMP_ROOT))

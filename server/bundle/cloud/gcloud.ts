@@ -1,13 +1,7 @@
-import { storage } from '@google-cloud/storage';
-
-import { default as env } from './env';
-import { CloudInterface } from './cloud';
-import { log } from './utils/log';
-
-const gcs = storage({
-  projectId: 'codesandbox-153802',
-  keyFilename: '/usr/.gcloud/codesandbox.json',
-});
+import { default as env } from '../../env';
+import { CloudInterface } from './';
+import { log } from '../../utils/log';
+import gcs from '../../services/gcloud';
 
 const bucket = gcs.bucket('bundles.codesandbox.io');
 

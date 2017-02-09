@@ -1,24 +1,11 @@
 import * as path from 'path';
-import * as fs from 'fs';
+import { tmpdir } from 'os';
 
 import getAuthorUsername from './utils/author-name';
 import { createDirectoryRecursively, deleteDirectory } from '../utils/directories';
+import { writeFile, mkdir } from 'mz/fs';
 
-export const TEMP_ROOT = 'temp/registry';
-
-const promiseMkdir = (dir) => new Promise((resolve, reject) => {
-  fs.mkdir(dir, (err) => {
-    if (err) reject(err);
-    resolve();
-  })
-});
-
-const promiseMkFile = (dir, module) => new Promise((resolve, reject) => {
-  fs.writeFile(path.join(dir, module.title), module.code, (err) => {
-    if (err) reject(err);
-    resolve();
-  });
-});
+export const TEMP_ROOT = `${tmpdir()}/registry`;
 
 /**
  * Creates the directory with all chilren, calls itself for directories in it
@@ -29,13 +16,13 @@ async function generateDirectory(directoryPath, source, directory) {
 
   // Create own directory
   const rootDirectoryPath = path.join(directoryPath, directory.title);
-  await promiseMkdir(rootDirectoryPath);
+  await mkdir(rootDirectoryPath);
 
   // Create all children directories
   await Promise.all(directoryChildren.map(dir => generateDirectory(rootDirectoryPath, source, dir)));
 
   // Create all modules
-  await Promise.all(moduleChildren.map(module => promiseMkFile(rootDirectoryPath, module)));
+  await Promise.all(moduleChildren.map(module => writeFile(path.join(rootDirectoryPath, module.title), module.code)));
 }
 
 /**
@@ -52,6 +39,11 @@ export default async function (version) {
   await createDirectoryRecursively(directory);
 
   const rootDirectories = source.directories.filter(d => d.directory_id == null);
+  try {
+    await Promise.all(rootDirectories.map(dir => generateDirectory(directory, source, dir)));
+  } catch (e) {
+    console.log('ha');
+  }
 
-  await Promise.all(rootDirectories.map(dir => generateDirectory(directory, source, dir)));
+  return directory;
 }
