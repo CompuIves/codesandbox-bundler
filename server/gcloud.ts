@@ -1,4 +1,4 @@
-import { storage } from 'google-cloud';
+import { storage } from '@google-cloud/storage';
 
 import { default as env } from './env';
 import { CloudInterface } from './cloud';

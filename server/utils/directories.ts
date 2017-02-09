@@ -2,6 +2,9 @@ import * as fs from 'fs';
 import * as rmdir from 'rimraf';
 import { log } from './log';
 
+/**
+ * Creates a directory, if the parent directories don't exist yet they will be created as well
+ */
 export function createDirectoryRecursively(directory: string) {
   const directories = directory.split('/').filter(x => x);
 
@@ -16,6 +19,9 @@ export function createDirectoryRecursively(directory: string) {
   }, '');
 }
 
+/**
+ * Deletes the given directory
+ */
 export function deleteDirectory(directory: string) {
   log(`Deleting ${directory}`);
   return new Promise((resolve, reject) => {

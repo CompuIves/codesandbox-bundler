@@ -7,31 +7,26 @@
   "scripts": {
     "build": "rimraf build && ./node_modules/.bin/tsc",
     "start": "npm run build && node build",
-    "test": "jest --no-cache",
-    "test:watch": "jest --no-cache --watch",
+    "test": "jest",
+    "test:watch": "jest --watch",
     "deploy": "pm2 deploy ecosystem.config.js production"
   },
   "author": "Ives van Hoorne",
   "dependencies": {
-    "aws-sdk": "^2.7.19",
+    "@google-cloud/storage": "^0.7.0",
     "axios": "^0.15.3",
-    "google-cloud": "^0.45.1",
-    "jest": "^18.0.0",
     "koa": "next",
     "koa-bodyparser": "next",
     "koa-route": "next",
     "latest-version": "^2.0.0",
-    "mongoose": "^4.7.4",
     "mz": "^2.6.0",
     "package-json": "^2.4.0",
     "redis": "^2.6.3",
     "rimraf": "^2.5.4",
     "semver": "^5.3.0",
     "string-hash": "^1.1.1",
-    "typescript": "^2.1.4",
-    "typescript-babel-jest": "^0.1.8",
-    "webpack": "^2.2.0",
-    "yarn": "^0.18.1"
+    "typescript": "^2.1.6",
+    "webpack": "^2.2.0"
   },
   "devDependencies": {
     "@types/koa": "^2.0.37",
@@ -43,17 +38,19 @@
     "eslint-plugin-import": "2.1.0",
     "eslint-plugin-jsx-a11y": "2.2.3",
     "eslint-plugin-react": "^6.8.0",
+    "jest": "^18.0.0",
+    "ts-jest": "^18.0.3",
     "typescript-eslint-parser": "^1.0.0"
   },
   "jest": {
     "transform": {
-      "^.+\\.(ts|tsx)$": "./node_modules/typescript-babel-jest"
+      ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
     "moduleFileExtensions": [
       "ts",
       "tsx",
       "js"
     ],
-    "testRegex": "__test__/.*\\.test\\.(ts|tsx)$"
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$"
   }
 }

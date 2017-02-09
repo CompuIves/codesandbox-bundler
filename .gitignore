@@ -6,6 +6,7 @@ yarn-error.log
 build
 public
 temp
+jest
 .aws
 
 config/production.json

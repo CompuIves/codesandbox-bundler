@@ -1,4 +1,4 @@
-import { createHash } from '../../server/utils/hashing';
+import { createHash } from './hashing';
 
 it('creates a hash', () => {
   const hash = createHash({ test: 'b' });
@@ -20,6 +20,6 @@ it('creates a persistent for different orders', () => {
   const b = {
     b: 'a',
     a: 'b'
-  }
+  };
   expect(createHash(a)).toEqual(createHash(b));
 });
