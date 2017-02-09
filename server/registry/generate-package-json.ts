@@ -1,4 +1,4 @@
-const getAuthorUsername = (author) => author != null ? author.username : 'anonymous';
+import getAuthorUsername from './utils/author-name';
 
 export default (version) => ({
   name: `${getAuthorUsername(version.sandbox.author)}/${version.sandbox.slug}`,

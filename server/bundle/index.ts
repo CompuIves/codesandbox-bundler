@@ -13,7 +13,7 @@ import { createHash } from '../utils/hashing';
 import cloud from '../cloud';
 import { isInQueue, addToQueue, removeFromQueue, saveBundleInfo, getBundleInfo, saveBundleError } from '../redis';
 
-const TEMP_ROOT = 'temp';
+const TEMP_ROOT = 'temp/bundles';
 
 const generatePackageJSON = (packages): string => (
   JSON.stringify({
