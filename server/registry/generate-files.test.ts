@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 
-import generateFiles from './generate-files';
+import { deleteDirectory } from '../utils/directories';
+import generateFiles, { TEMP_ROOT } from './generate-files';
 
 it('creates the right structure', async () => {
   const version = {
@@ -25,8 +26,8 @@ it('creates the right structure', async () => {
   // const memoryFs = new fs();
   await generateFiles(version);
 
-  expect(fs.readdirSync('temp/registry/anonymous/test/1.0.0')).toEqual(['directory']);
-  expect(fs.readFileSync('temp/registry/anonymous/test/1.0.0/directory/firstmodule.js').toString()).toEqual('hello world');
+  expect(fs.readdirSync(`${TEMP_ROOT}/anonymous/test/1.0.0`)).toEqual(['directory']);
+  expect(fs.readFileSync(`${TEMP_ROOT}/anonymous/test/1.0.0/directory/firstmodule.js`).toString()).toEqual('hello world');
 });
 
 it('handles multiple files', async () => {
@@ -56,9 +57,9 @@ it('handles multiple files', async () => {
   // const memoryFs = new fs();
   await generateFiles(version);
 
-  expect(fs.readdirSync('temp/registry/anonymous/test/2.0.0')).toEqual(['directory']);
-  expect(fs.readFileSync('temp/registry/anonymous/test/2.0.0/directory/firstmodule.js').toString()).toEqual('hello world');
-  expect(fs.readFileSync('temp/registry/anonymous/test/2.0.0/directory/aaaaaa.js').toString()).toEqual('hello world2');
+  expect(fs.readdirSync(`${TEMP_ROOT}/anonymous/test/2.0.0`)).toEqual(['directory']);
+  expect(fs.readFileSync(`${TEMP_ROOT}/anonymous/test/2.0.0/directory/firstmodule.js`).toString()).toEqual('hello world');
+  expect(fs.readFileSync(`${TEMP_ROOT}/anonymous/test/2.0.0/directory/aaaaaa.js`).toString()).toEqual('hello world2');
 });
 
 it('handles nested files', async () => {
@@ -92,9 +93,9 @@ it('handles nested files', async () => {
   // const memoryFs = new fs();
   await generateFiles(version);
 
-  expect(fs.readdirSync('temp/registry/anonymous/test/3.0.0')).toEqual(['directory']);
-  expect(fs.readFileSync('temp/registry/anonymous/test/3.0.0/directory/firstmodule.js').toString()).toEqual('hello world');
-  expect(fs.readFileSync('temp/registry/anonymous/test/3.0.0/directory/hello/aaaaaa.js').toString()).toEqual('hello world2');
+  expect(fs.readdirSync(`${TEMP_ROOT}/anonymous/test/3.0.0`)).toEqual(['directory']);
+  expect(fs.readFileSync(`${TEMP_ROOT}/anonymous/test/3.0.0/directory/firstmodule.js`).toString()).toEqual('hello world');
+  expect(fs.readFileSync(`${TEMP_ROOT}/anonymous/test/3.0.0/directory/hello/aaaaaa.js`).toString()).toEqual('hello world2');
 });
 
 it('handles multiple root directories', async () => {
@@ -132,7 +133,9 @@ it('handles multiple root directories', async () => {
   // const memoryFs = new fs();
   await generateFiles(version);
 
-  expect(fs.readdirSync('temp/registry/anonymous/test/4.0.0')).toEqual(['directory', 'directoryalso']);
-  expect(fs.readFileSync('temp/registry/anonymous/test/4.0.0/directory/firstmodule.js').toString()).toEqual('hello world');
-  expect(fs.readFileSync('temp/registry/anonymous/test/4.0.0/directoryalso/aaaaaa.js').toString()).toEqual('hello world2');
+  expect(fs.readdirSync(`${TEMP_ROOT}/anonymous/test/4.0.0`)).toEqual(['directory', 'directoryalso']);
+  expect(fs.readFileSync(`${TEMP_ROOT}/anonymous/test/4.0.0/directory/firstmodule.js`).toString()).toEqual('hello world');
+  expect(fs.readFileSync(`${TEMP_ROOT}/anonymous/test/4.0.0/directoryalso/aaaaaa.js`).toString()).toEqual('hello world2');
 });
+
+afterAll(() => deleteDirectory(TEMP_ROOT))

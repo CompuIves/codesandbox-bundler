@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import getAuthorUsername from './utils/author-name';
 import { createDirectoryRecursively, deleteDirectory } from '../utils/directories';
 
-const TEMP_ROOT = 'temp/registry';
+export const TEMP_ROOT = 'temp/registry';
 
 const promiseMkdir = (dir) => new Promise((resolve, reject) => {
   fs.mkdir(dir, (err) => {
