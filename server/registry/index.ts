@@ -19,7 +19,9 @@ const generateURL = (filename: string) => (
   : `https://bundles.codesandbox.io/${filename}`
 );
 
-export default async function(ctx: Context, version) {
+export default async function(ctx: Context) {
+  const version = ctx.request.body;
+
   const directory = await generateFiles(version);
   const packageJSON = await generatePackageJson(version);
 

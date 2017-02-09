@@ -25,7 +25,7 @@ it('creates a package json', async () => {
     }
   };
 
-  await route({}, version);
+  await route({ request: { body: version } });
   expect(fs.readdirSync(`${TEMP_ROOT}/anonymous/test/1.0.0`)).toEqual(['directory', 'package.json']);
 });
 
@@ -50,7 +50,7 @@ it('creates the tar', async () => {
     }
   };
 
-  await route({}, version);
+  await route({ request: { body: version } });
 
   expect(fs.readFileSync('public/registry/anonymous-test-1.0.0.tgz')).toBeTruthy();
 });
@@ -76,9 +76,9 @@ it('responds correctly', async () => {
     }
   };
 
-  const ctx = {};
+  const ctx = { request: { body: version } };
 
-  await route(ctx, version);
+  await route(ctx);
 
   expect(ctx.body.shasum).toBeTruthy();
   expect(ctx.body.tarball).toBeTruthy();
@@ -105,9 +105,9 @@ it('generates correct shasum', async () => {
     }
   };
 
-  const ctx = {};
+  const ctx = { request: { body: version } };
 
-  await route(ctx, version);
+  await route(ctx);
 
   const file = fs.readFileSync('public/registry/anonymous-test-1.0.0.tgz');
   const shasum = crypto.createHash('sha1').update(file).digest('hex');
