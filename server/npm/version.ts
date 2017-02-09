@@ -3,7 +3,7 @@ import * as fetchLatestVersion from 'latest-version';
 import * as packageJson from 'package-json';
 import * as semver from 'semver';
 
-const isUrlVersion = (version) => /^\w/.test(version);
+const isUrlVersion = (version) => /^[^\d]/.test(version);
 
 export async function getAbsoluteVersion(ctx: Context, packageName: string, version: string) {
   if (version === 'latest') {
