@@ -21,6 +21,31 @@ it('works without author', () => {
   expect(generatePackageJson(version)).toEqual(expected);
 });
 
+it('lowercases the title', () => {
+  const version = {
+    version: '1.0.0',
+    description: 'koekje',
+    npm_dependencies: {},
+    sandbox: {
+      slug: 'Cookie',
+      author: {
+        username: "Koekje"
+      }
+    },
+  };
+
+  const expected = {
+    name: 'koekje/cookie',
+    description: 'koekje',
+    main: 'index.js',
+    dependencies: {},
+    version: '1.0.0',
+  };
+
+  expect(generatePackageJson(version)).toEqual(expected);
+});
+
+
 it('lists empty dependency object if it\'s null', () => {
   const version = {
     version: '1.0.0',
