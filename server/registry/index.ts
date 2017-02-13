@@ -36,7 +36,7 @@ export default async function(ctx) {
   await cloud.upload(tarPath);
 
   // Cleanup
-  await deleteDirectory(directory);
+  deleteDirectory(directory);
 
   ctx.body = {
     tarball: generateURL(basename(tarPath)),
