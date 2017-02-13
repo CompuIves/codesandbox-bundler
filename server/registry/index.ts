@@ -15,7 +15,7 @@ import env from '../env';
 
 const generateURL = (filename: string) => (
   env === 'development' ?
-    `http://bundles.codesandbox.dev/${filename}`
+    `http://bundles.codesandbox.dev/registry/${filename}`
   : `https://bundles.codesandbox.io/${filename}`
 );
 
