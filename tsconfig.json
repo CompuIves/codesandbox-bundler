@@ -10,6 +10,6 @@
         "outDir": "build"
     },
     "exclude": [
-      "node_modules", "__tests__"
+      "node_modules", "__tests__", "build"
     ]
 }
