@@ -5,7 +5,6 @@ import * as crypto from 'crypto';
 import { tmpdir } from 'os';
 import { basename, dirname } from 'path';
 
-import generateFiles from './generate-files';
 import generatePackageJson from './generate-package-json';
 import generateAuthorName from './utils/author-name';
 import { createDirectoryRecursively, deleteDirectory } from '../utils/directories';
