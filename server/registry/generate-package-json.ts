@@ -1,7 +1,7 @@
 import getAuthorUsername from './utils/author-name';
 
 export default (version) => ({
-  name: `${getAuthorUsername(version.sandbox.author)}/${version.sandbox.slug}`.toLowerCase(),
+  name: `@codesandbox/${getAuthorUsername(version.sandbox.author)}-${version.sandbox.slug}`.toLowerCase(),
   description: version.description || '',
   main: 'index.js',
   version: version.version,

@@ -30,7 +30,7 @@ const sandboxUrl = (id: string) => (
 
 const generateURL = (hash: string) => (
   env === 'development' ?
-    `http://bundles.codesandbox.dev/${hash}.js`
+    `http://bundles.codesandbox.dev/bundles/${hash}.js`
   : `https://bundles.codesandbox.io/${hash}.js`
 );
 
@@ -71,7 +71,7 @@ async function bundleDependencies(hash: string, packages) {
     await saveBundleInfo(hash, manifest);
     await removeFromQueue(hash);
 
-    await deleteDirectory(directory);
+    // await deleteDirectory(directory);
   } catch (e) {
     await saveBundleError(hash, e);
     await removeFromQueue(hash);

@@ -4,31 +4,6 @@ import * as crypto from 'crypto';
 import { TEMP_ROOT } from './generate-files';
 import route from './index';
 
-it('creates a package json', async () => {
-  const version = {
-    version: '1.0.0',
-    npm_dependencies: { test: '1.0.0 '},
-    sandbox: {
-      slug: 'test'
-    },
-    source: {
-      directories: [{
-        id: 1,
-        directory_id: null,
-        title: 'directory'
-      }],
-      modules: [{
-        directory_id: 1,
-        title: 'firstmodule.js',
-        code: 'hello world',
-      }]
-    }
-  };
-
-  await route({ request: { body: version } });
-  expect(fs.readdirSync(`${TEMP_ROOT}/anonymous/test/1.0.0`)).toEqual(['directory', 'package.json']);
-});
-
 it('creates the tar', async () => {
   const version = {
     version: '1.0.0',
@@ -45,7 +20,7 @@ it('creates the tar', async () => {
       modules: [{
         directory_id: 1,
         title: 'firstmodule.js',
-        code: 'hello world',
+        code: 'const hey = \'hello world\'',
       }]
     }
   };
@@ -71,7 +46,7 @@ it('responds correctly', async () => {
       modules: [{
         directory_id: 1,
         title: 'firstmodule.js',
-        code: 'hello world',
+        code: 'const hey = \'hello world\'',
       }]
     }
   };
@@ -100,7 +75,7 @@ it('generates correct shasum', async () => {
       modules: [{
         directory_id: 1,
         title: 'firstmodule.js',
-        code: 'hello world',
+        code: 'const hey = \'hello world\'',
       }]
     }
   };

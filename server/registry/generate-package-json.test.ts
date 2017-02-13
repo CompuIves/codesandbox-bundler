@@ -11,7 +11,7 @@ it('works without author', () => {
   };
 
   const expected = {
-    name: 'anonymous/cookie',
+    name: '@codesandbox/anonymous-cookie',
     description: 'koekje',
     main: 'index.js',
     dependencies: {},
@@ -35,7 +35,7 @@ it('lowercases the title', () => {
   };
 
   const expected = {
-    name: 'koekje/cookie',
+    name: '@codesandbox/koekje-cookie',
     description: 'koekje',
     main: 'index.js',
     dependencies: {},
@@ -56,7 +56,7 @@ it('lists empty dependency object if it\'s null', () => {
   };
 
   const expected = {
-    name: 'anonymous/cookie',
+    name: '@codesandbox/anonymous-cookie',
     description: 'koekje',
     main: 'index.js',
     dependencies: {},
@@ -80,7 +80,7 @@ it('works with author', () => {
   };
 
   const expected = {
-    name: 'ives/cookie',
+    name: '@codesandbox/ives-cookie',
     description: 'koekje',
     main: 'index.js',
     dependencies: {},
