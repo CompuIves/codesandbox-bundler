@@ -10,19 +10,18 @@ export const TEMP_ROOT = `${tmpdir()}/registry`;
 /**
  * Creates the directory with all chilren, calls itself for directories in it
  */
-async function generateDirectory(directoryPath, source, directory) {
-  const directoryChildren = source.directories.filter(d => d.directory_id == directory.id);
-  const moduleChildren = source.modules.filter(m => m.directory_id == directory.id);
+async function generateDirectory(directoryPath: string, source, directoryId?: string) {
+  const directoryChildren = source.directories.filter(d => d.directory_id == directoryId);
+  const moduleChildren = source.modules.filter(m => m.directory_id == directoryId);
 
   // Create own directory
-  const rootDirectoryPath = path.join(directoryPath, directory.title);
-  await mkdir(rootDirectoryPath);
+  await createDirectoryRecursively(directoryPath);
 
   // Create all children directories
-  await Promise.all(directoryChildren.map(dir => generateDirectory(rootDirectoryPath, source, dir)));
+  await Promise.all(directoryChildren.map(dir => generateDirectory(path.join(directoryPath, dir.title), source, dir.id)));
 
   // Create all modules
-  await Promise.all(moduleChildren.map(module => writeFile(path.join(rootDirectoryPath, module.title), module.code)));
+  await Promise.all(moduleChildren.map(module => writeFile(path.join(directoryPath, module.title), module.code)));
 }
 
 /**
@@ -36,14 +35,8 @@ export default async function (version) {
   const directory = path.join(TEMP_ROOT, getAuthorUsername(sandbox.author), sandbox.slug, version.version);
 
   await deleteDirectory(directory);
-  await createDirectoryRecursively(directory);
 
-  const rootDirectories = source.directories.filter(d => d.directory_id == null);
-  try {
-    await Promise.all(rootDirectories.map(dir => generateDirectory(directory, source, dir)));
-  } catch (e) {
-    console.log('ha');
-  }
+  await generateDirectory(directory, source);
 
   return directory;
 }

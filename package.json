@@ -54,6 +54,7 @@
       "tsx",
       "js"
     ],
+    "testPathIgnorePatterns": ["<rootDir>/node_modules/", "<rootDir>/build/"],
     "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$"
   }
 }

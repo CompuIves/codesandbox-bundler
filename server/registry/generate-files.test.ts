@@ -29,6 +29,32 @@ it('creates the right structure', async () => {
   expect(fs.readFileSync(`${TEMP_ROOT}/anonymous/test/1.0.0/directory/firstmodule.js`).toString()).toEqual('hello world');
 });
 
+it('saves root modules', async () => {
+  const version = {
+    version: '1.0.0',
+    sandbox: {
+      slug: 'test'
+    },
+    source: {
+      directories: [{
+        id: 1,
+        directory_id: null,
+        title: 'directory'
+      }],
+      modules: [{
+        directory_id: null,
+        title: 'firstmodule.js',
+        code: 'hello world',
+      }]
+    }
+  };
+
+  await generateFiles(version);
+
+  expect(fs.readdirSync(`${TEMP_ROOT}/anonymous/test/1.0.0`)).toEqual(['directory', 'firstmodule.js']);
+  expect(fs.readFileSync(`${TEMP_ROOT}/anonymous/test/1.0.0/firstmodule.js`).toString()).toEqual('hello world');
+});
+
 it('creates the right root directory', async () => {
   const version = {
     version: '1.0.0',

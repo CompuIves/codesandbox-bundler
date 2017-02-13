@@ -1,4 +1,3 @@
-import { Context } from 'koa';
 import * as path from 'path';
 import { writeFile } from 'mz/fs';
 import { readFileSync } from 'fs';
@@ -19,8 +18,10 @@ const generateURL = (filename: string) => (
   : `https://bundles.codesandbox.io/${filename}`
 );
 
-export default async function(ctx: Context) {
+export default async function(ctx) {
   const version = ctx.request.body;
+
+  console.log(JSON.stringify(version));
 
   const directory = await generateFiles(version);
   const packageJSON = await generatePackageJson(version);
