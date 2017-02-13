@@ -8,6 +8,5 @@ public
 temp
 jest
 .aws
-registry
 
 config/production.json
