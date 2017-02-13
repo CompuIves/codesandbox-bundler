@@ -1,7 +1,6 @@
 import * as fs from 'fs';
 import * as crypto from 'crypto';
 
-import { TEMP_ROOT } from './generate-files';
 import route from './index';
 
 it('creates the tar', async () => {
