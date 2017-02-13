@@ -5,9 +5,10 @@ import * as crypto from 'crypto';
 import { tmpdir } from 'os';
 import { basename } from 'path';
 
-import generateFiles from './generate-files';
+import generateFiles, { cleanup } from './generate-files';
 import generatePackageJson from './generate-package-json';
 import generateAuthorName from './utils/author-name';
+import { deleteDirectory } from '../utils/directories';
 import tar from './tar';
 import cloud from './cloud';
 import env from '../env';
@@ -32,7 +33,10 @@ export default async function(ctx) {
   const buffer = readFileSync(tarPath);
   const shasum = crypto.createHash('sha1').update(buffer).digest('hex');
 
-  cloud.upload(tarPath);
+  await cloud.upload(tarPath);
+
+  // Cleanup
+  await deleteDirectory(directory);
 
   ctx.body = {
     tarball: generateURL(basename(tarPath)),

@@ -7,6 +7,10 @@ import { writeFile, mkdir } from 'mz/fs';
 
 export const TEMP_ROOT = `${tmpdir()}/registry`;
 
+function getDirectoryPath(version) {
+  return path.join(TEMP_ROOT, getAuthorUsername(version.sandbox.author), version.sandbox.slug, version.version);
+}
+
 /**
  * Creates the directory with all chilren, calls itself for directories in it
  */
@@ -30,13 +34,10 @@ async function generateDirectory(directoryPath: string, source, directoryId?: st
  * Can specify a custom file system to use, it should follow the node system
  */
 export default async function (version) {
-  const source = version.source;
-  const sandbox = version.sandbox;
-  const directory = path.join(TEMP_ROOT, getAuthorUsername(sandbox.author), sandbox.slug, version.version);
-
+  const directory = getDirectoryPath(version);
   await deleteDirectory(directory);
 
-  await generateDirectory(directory, source);
+  await generateDirectory(directory, version.source);
 
   return directory;
 }
