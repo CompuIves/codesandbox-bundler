@@ -21,8 +21,6 @@ const generateURL = (filename: string) => (
 export default async function(ctx) {
   const version = ctx.request.body;
 
-  console.log(JSON.stringify(version));
-
   const directory = await generateFiles(version);
   const packageJSON = await generatePackageJson(version);
 
