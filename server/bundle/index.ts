@@ -71,7 +71,9 @@ async function bundleDependencies(hash: string, packages) {
     await saveBundleInfo(hash, manifest);
     await removeFromQueue(hash);
 
-    // await deleteDirectory(directory);
+    if (process.env.NODE_ENV === 'production') {
+      await deleteDirectory(directory);
+    }
   } catch (e) {
     await saveBundleError(hash, e);
     await removeFromQueue(hash);
