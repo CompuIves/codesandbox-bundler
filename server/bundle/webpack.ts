@@ -2,6 +2,8 @@ import * as webpack from 'webpack';
 import * as fs from 'fs';
 import * as path from 'path';
 
+const MAIN_ENTRIES = ['jsnext:main', 'module', 'browser', 'main'];
+
 /**
  * Read every package.json to get the 'main' field (which is the entry file)
  * Returns an object with { packageName: mainFile }
@@ -14,9 +16,13 @@ function getEntries(directory) {
     const filePath = path.join(directory, 'node_modules', packageName, 'package.json');
     if (fs.existsSync(filePath)) {
       const contents = fs.readFileSync(filePath).toString();
+
+      // Find main entry file
+      const main = MAIN_ENTRIES.map(entry => contents.match(new RegExp(`"${entry}":\\s?"(.*)"`)))
+                               .filter(x => x)[0];
       return {
         package: packageName,
-        main: contents.match(/"jsnext:main": "(.*)"/) || contents.match(/"main": "(.*)"/)
+        main,
       };
     }
   }).filter(x => x)
