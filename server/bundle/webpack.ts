@@ -36,6 +36,22 @@ function getEntries(directory) {
     }, {})
 }
 
+/**
+ * This is used to include all js and css files in the dependency folders, this way we can import things
+ * like react-dom/server.
+ */
+function getVendorEntries(basePath: string, dependencies: Array<string>) {
+  return dependencies.reduce((prev, dependency) => {
+    const depPath = path.join(basePath, 'node_modules', dependency);
+
+    const files = fs.readdirSync(depPath).filter((file) => {
+      return (path.extname(file) === '.js' || path.extname(file) === '.css') && file !== path.basename(basePath);
+    }).map(file => path.join(dependency, file));
+
+    return [...prev, ...files];
+  }, []);
+}
+
 function rewriteManifest(hash, directory) {
   // Rewrite the paths from the manifest from absolute to relative
   const manifestPath = path.join(directory, 'manifest.json');
@@ -73,7 +89,7 @@ export default function bundle(hash: string, dependencies: Array<string>, direct
       modules: ['node_modules'],
     },
     entry: {
-      vendors: dependencies,
+      vendors: [...dependencies, getVendorEntries(directory, dependencies)],
     },
     output: {
       path: directory,
