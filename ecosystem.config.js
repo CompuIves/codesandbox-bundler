@@ -30,7 +30,7 @@ module.exports = {
       ref: 'origin/master',
       repo: 'git@github.com:CompuIves/codesandbox-bundler.git',
       path: '/home/bundler',
-      'post-deploy': 'npm install && npm run build && pm2 startOrRestart ecosystem.config.js --env production',
+      'post-deploy': 'yarn && npm run build && pm2 startOrRestart ecosystem.config.js --env production',
     },
   },
 };

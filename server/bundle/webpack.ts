@@ -69,6 +69,9 @@ function rewriteManifest(hash, directory) {
 export default function bundle(hash: string, dependencies: Array<string>, directory: string) {
   const webpackConfig = {
     context: directory,
+    resolve: {
+      modules: ['node_modules'],
+    },
     entry: {
       vendors: dependencies,
     },

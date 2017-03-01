@@ -4,6 +4,7 @@ import * as parser from 'koa-bodyparser';
 
 import * as bundle from './bundle';
 import * as version from './npm/version';
+import registry from './registry';
 import { log } from './utils/log';
 import env from './env';
 
@@ -34,5 +35,6 @@ app.use(router.get('/', (ctx: Koa.Context) => ctx.body = 'Hello!'));
 app.use(router.post('/bundle', bundle.post));
 app.use(router.get('/bundle/:hash', bundle.get));
 app.use(router.get('/npm/version/:packageName/:version+', version.getAbsoluteVersion));
+app.use(router.post('/registry/publish', registry));
 
 export default app;

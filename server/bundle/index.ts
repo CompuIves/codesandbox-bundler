@@ -10,10 +10,10 @@ import { log } from '../utils/log';
 import { deleteDirectory, createDirectoryRecursively } from '../utils/directories';
 import { createHash } from '../utils/hashing';
 // import { upload } from './s3';
-import cloud from '../cloud';
+import cloud from './cloud';
 import { isInQueue, addToQueue, removeFromQueue, saveBundleInfo, getBundleInfo, saveBundleError } from '../redis';
 
-const TEMP_ROOT = 'temp';
+export const TEMP_ROOT = 'temp/bundles';
 
 const generatePackageJSON = (packages): string => (
   JSON.stringify({
@@ -30,7 +30,7 @@ const sandboxUrl = (id: string) => (
 
 const generateURL = (hash: string) => (
   env === 'development' ?
-    `http://bundles.codesandbox.dev/${hash}.js`
+    `http://bundles.codesandbox.dev/bundles/${hash}.js`
   : `https://bundles.codesandbox.io/${hash}.js`
 );
 
