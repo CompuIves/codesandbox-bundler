@@ -100,7 +100,12 @@ export async function post(ctx) {
     method: 'GET'
   });
 
-  const packages = response.data;
+  const packages = response.data.data;
+
+  if (Object.keys(packages).length === 0) {
+    ctx.body = JSON.stringify({ url: '' });
+    return;
+  }
 
   const hash: string = createHash(packages);
   const url: string = generateURL(hash);
