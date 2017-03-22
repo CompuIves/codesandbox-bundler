@@ -22,16 +22,16 @@ const generatePackageJSON = (packages): string => (
   })
 );
 
-const sandboxUrl = (id: string) => (
+const dependenciesUrl = (id: string) => (
   env === 'development' ?
-    `http://nginx/api/v1/sources/${id}/dependencies`
-  : `https://codesandbox.io/api/v1/sources/${id}/dependencies`
+    `http://codesandbox.dev/api/v1/sandboxes/${id}/dependencies`
+    : `https://codesandbox.io/api/v1/sandboxes/${id}/dependencies`
 );
 
 const generateURL = (hash: string) => (
   env === 'development' ?
     `http://bundles.codesandbox.dev/bundles/${hash}.js`
-  : `https://bundles.codesandbox.io/${hash}.js`
+    : `https://bundles.codesandbox.io/${hash}.js`
 );
 
 const createBundleResponse = (cachedBundle, url, hash, ctx) => {
@@ -96,11 +96,16 @@ export async function post(ctx) {
   if (id == null) throw new Error('Invalid Sandbox ID');
 
   const response = await axios({
-    url: sandboxUrl(id),
+    url: dependenciesUrl(id),
     method: 'GET'
   });
 
-  const packages = response.data.npm_dependencies;
+  const packages = response.data.data;
+
+  if (Object.keys(packages).length === 0) {
+    ctx.body = JSON.stringify({ url: '', manifest: {} });
+    return;
+  }
 
   const hash: string = createHash(packages);
   const url: string = generateURL(hash);

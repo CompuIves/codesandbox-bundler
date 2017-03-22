@@ -10,7 +10,7 @@ const MAIN_ENTRIES = ['jsnext:main', 'module', 'browser', 'main'];
  */
 function getEntries(directory) {
   const packages = fs.readdirSync(path.join(directory, 'node_modules'))
-                        .filter(x => x !== '.yarn-integrity');
+    .filter(x => x !== '.yarn-integrity');
 
   return packages.map(packageName => {
     const filePath = path.join(directory, 'node_modules', packageName, 'package.json');
@@ -19,7 +19,7 @@ function getEntries(directory) {
 
       // Find main entry file
       const main = MAIN_ENTRIES.map(entry => contents.match(new RegExp(`"${entry}":\\s?"(.*)"`)))
-                               .filter(x => x)[0];
+        .filter(x => x)[0];
       return {
         package: packageName,
         main,
@@ -36,6 +36,22 @@ function getEntries(directory) {
     }, {})
 }
 
+/**
+ * This is used to include all js and css files in the dependency folders, this way we can import things
+ * like react-dom/server.
+ */
+function getVendorEntries(basePath: string, dependencies: Array<string>) {
+  return dependencies.reduce((prev, dependency) => {
+    const depPath = path.join(basePath, 'node_modules', dependency);
+
+    const files = fs.readdirSync(depPath).filter((file) => {
+      return (path.extname(file) === '.js' || path.extname(file) === '.css') && file !== path.basename(basePath);
+    }).map(file => path.join(dependency, file));
+
+    return [...prev, ...files];
+  }, []);
+}
+
 function rewriteManifest(hash, directory) {
   // Rewrite the paths from the manifest from absolute to relative
   const manifestPath = path.join(directory, 'manifest.json');
@@ -44,10 +60,10 @@ function rewriteManifest(hash, directory) {
   const regex = new RegExp(`.*?${hash}\/node_modules\/`);
 
   const newContent = Object.keys(manifestJSON.content).reduce(
-  (newContent, next) => {
-    newContent[next.replace(regex, '')] = manifestJSON.content[next];
-    return newContent;
-  }, {});
+    (newContent, next) => {
+      newContent[next.replace(regex, '')] = manifestJSON.content[next];
+      return newContent;
+    }, {});
 
   // Add entry files to manifest
   const entries = getEntries(directory);
@@ -73,7 +89,7 @@ export default function bundle(hash: string, dependencies: Array<string>, direct
       modules: ['node_modules'],
     },
     entry: {
-      vendors: dependencies,
+      vendors: [...dependencies, ...getVendorEntries(directory, dependencies)],
     },
     output: {
       path: directory,
@@ -95,7 +111,7 @@ export default function bundle(hash: string, dependencies: Array<string>, direct
         name: 'dependencies',
         context: '/'
       }),
-      new webpack.optimize.UglifyJsPlugin({mangle: false})
+      new webpack.optimize.UglifyJsPlugin({ mangle: false })
     ]
   }
 

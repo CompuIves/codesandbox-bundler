@@ -13,6 +13,7 @@
       "node_modules",
       "__tests__",
       "build",
-      "**/*.test.ts"
+      "**/*.test.ts",
+      "temp"
     ]
 }
