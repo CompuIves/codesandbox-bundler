@@ -103,7 +103,7 @@ export async function post(ctx) {
   const packages = response.data.data;
 
   if (Object.keys(packages).length === 0) {
-    ctx.body = JSON.stringify({ url: '' });
+    ctx.body = JSON.stringify({ url: '', manifest: {} });
     return;
   }
 
