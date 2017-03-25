@@ -8,9 +8,11 @@ const MAIN_ENTRIES = ['jsnext:main', 'module', 'browser', 'main'];
  * Read every package.json to get the 'main' field (which is the entry file)
  * Returns an object with { packageName: mainFile }
  */
-function getEntries(directory) {
-  const packages = fs.readdirSync(path.join(directory, 'node_modules'))
-    .filter(x => x !== '.yarn-integrity');
+function getEntries(directory, dependencies) {
+  const packages = [
+    ...fs.readdirSync(path.join(directory, 'node_modules')).filter(x => x !== '.yarn-integrity'),
+    ...dependencies
+  ];
 
   return packages.map(packageName => {
     const filePath = path.join(directory, 'node_modules', packageName, 'package.json');
@@ -52,7 +54,7 @@ function getVendorEntries(basePath: string, dependencies: Array<string>) {
   }, []);
 }
 
-function rewriteManifest(hash, directory) {
+function rewriteManifest(hash, directory, dependencies) {
   // Rewrite the paths from the manifest from absolute to relative
   const manifestPath = path.join(directory, 'manifest.json');
   const manifestFile = fs.readFileSync(manifestPath).toString();
@@ -66,7 +68,7 @@ function rewriteManifest(hash, directory) {
     }, {});
 
   // Add entry files to manifest
-  const entries = getEntries(directory);
+  const entries = getEntries(directory, dependencies);
 
   Object.keys(entries).forEach(packageName => {
     newContent[packageName] = newContent[entries[packageName]];
@@ -122,7 +124,7 @@ export default function bundle(hash: string, dependencies: Array<string>, direct
       if (err) return reject(err);
 
       try {
-        rewriteManifest(hash, directory);
+        rewriteManifest(hash, directory, dependencies);
       } catch (e) {
         return reject(e);
       }
