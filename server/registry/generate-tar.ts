@@ -15,7 +15,7 @@ function transformCode(code: string) {
  */
 function addEntry(packer: any, entry: Object, buffer?: Buffer): Promise<{}> {
   return new Promise((resolve, reject) => {
-    packer.entry(entry, buffer, function(err) {
+    packer.entry(entry, buffer, function (err) {
       if (err) {
         reject(err);
       } else {
@@ -35,6 +35,13 @@ async function addEntryFile(packer, path, content) {
   }, Buffer.from(content, 'utf8'));
 }
 
+async function addDirectory(packer, path) {
+  await addEntry(packer, {
+    name: path,
+    type: 'directory',
+  });
+}
+
 /**
  * Creates the directory with all chilren, calls itself for directories in it
  */
@@ -43,10 +50,7 @@ async function generateDirectory(packer, directoryPath: string, source, director
   const moduleChildren = source.modules.filter(m => m.directory_id == directoryId);
 
   // Create own directory
-  await addEntry(packer, {
-    name: directoryPath,
-    type: 'directory',
-  });
+  await addDirectory(packer, directoryPath);
 
   // Create all children directories
   await Promise.all(directoryChildren.map(dir => generateDirectory(packer, join(directoryPath, dir.title), source, dir.id)));
