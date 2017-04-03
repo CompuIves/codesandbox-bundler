@@ -1,8 +1,9 @@
 import * as webpack from 'webpack';
 import * as fs from 'fs';
 import * as path from 'path';
+import { flatten } from 'lodash'
 
-const MAIN_ENTRIES = ['main', 'jsnext:main', 'module', 'browser'];
+const MAIN_ENTRIES = ['jsnext:main', 'module', 'browser', 'main'];
 
 /**
  * Read every package.json to get the 'main' field (which is the entry file)
@@ -14,28 +15,26 @@ function getEntries(directory, dependencies) {
     ...dependencies
   ];
 
-  return packages.map(packageName => {
+  return flatten(packages.map(packageName => {
     const filePath = path.join(directory, 'node_modules', packageName, 'package.json');
     if (fs.existsSync(filePath)) {
       const contents = fs.readFileSync(filePath).toString();
 
       // Find main entry file
-      const main = MAIN_ENTRIES.map(entry => contents.match(new RegExp(`"${entry}":\\s?"(.*)"`)))
-        .filter(x => x)[0];
-      return {
-        package: packageName,
-        main,
-      };
+      return MAIN_ENTRIES
+        .map(entry => contents.match(new RegExp(`"${entry}":\\s?"(.*)"`)))
+        .filter(x => x)
+        .map(main => ({
+          package: packageName,
+          main
+        }));
     }
-  }).filter(x => x)
+  }))
+    .filter(x => x)
     .filter(x => x.main)
     .map(x => ({ package: x.package, main: x.main[1] }))
     .filter(x => x.main)
     .map(x => ({ package: x.package, main: `${x.package}/${x.main.replace('./', '')}` }))
-    .reduce((prev, next) => {
-      prev[next.package] = next.main;
-      return prev;
-    }, {})
 }
 
 /**
@@ -69,8 +68,10 @@ function rewriteManifest(hash, directory, dependencies) {
 
   // Add entry files to manifest
   const entries = getEntries(directory, dependencies);
-  Object.keys(entries).forEach(packageName => {
-    newContent[packageName] = newContent[entries[packageName]] || newContent[`${entries[packageName]}.js`]
+
+  // Try for all entries to rewrite if there is a match
+  entries.forEach(entry => {
+    newContent[entry.package] = newContent[entry.package] || newContent[entry.main] || newContent[`${entry.main}.js`]
   });
 
   // Also transform /index.js in manifest as well
