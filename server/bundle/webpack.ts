@@ -2,7 +2,7 @@ import * as webpack from 'webpack';
 import * as fs from 'fs';
 import * as path from 'path';
 
-const MAIN_ENTRIES = ['jsnext:main', 'module', 'browser', 'main'];
+const MAIN_ENTRIES = ['main', 'jsnext:main', 'module', 'browser'];
 
 /**
  * Read every package.json to get the 'main' field (which is the entry file)
@@ -69,15 +69,21 @@ function rewriteManifest(hash, directory, dependencies) {
 
   // Add entry files to manifest
   const entries = getEntries(directory, dependencies);
-
   Object.keys(entries).forEach(packageName => {
-    newContent[packageName] = newContent[entries[packageName]];
+    newContent[packageName] = newContent[entries[packageName]] || newContent[`${entries[packageName]}.js`]
   });
 
   // Also transform /index.js in manifest as well
   Object.keys(newContent).forEach(packageRoute => {
     if (packageRoute.endsWith('/index.js')) {
       newContent[packageRoute.replace('/index.js', '')] = newContent[packageRoute];
+    }
+  })
+
+  // Also transform /index in manifest as well
+  Object.keys(newContent).forEach(packageRoute => {
+    if (packageRoute.endsWith('/index')) {
+      newContent[packageRoute.replace('/index', '')] = newContent[packageRoute];
     }
   })
 
