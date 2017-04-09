@@ -112,7 +112,7 @@ export default function bundle(hash: string, dependencies: Array<string>, direct
       }),
       new webpack.DefinePlugin({
         'process.env': {
-          'NODE_ENV': JSON.stringify('development'),
+          'NODE_ENV': JSON.stringify('production'),
         }
       }),
       new webpack.DllPlugin({
