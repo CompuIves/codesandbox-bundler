@@ -10,6 +10,8 @@ import env from './env';
 
 const app = new Koa();
 
+console.log('test')
+
 app.use(async (ctx, next) => {
   const start = +new Date();
   await next();
